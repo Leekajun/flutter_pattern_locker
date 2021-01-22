@@ -1,9 +1,33 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_pattern_locker/flutter_pattern_locker.dart';
 
-# flutter_pattern_locker
-九宫格解锁
+void main() {
+  runApp(MyApp());
+}
 
-example
-```dart
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '九宫格解锁',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: MyHomePage(title: '九宫格解锁'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+  final String title;
+  LockConfig config = LockConfig();
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
 class _MyHomePageState extends State<MyHomePage> {
   String tip = '请设置密码';
   String subTip = '';
@@ -71,15 +95,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-```
-### 可以显示错误轨迹
-
-![](https://raw.githubusercontent.com/Leekajun/ImageHosting/master/img/gif1.gif)
-
-### 在绘制完成之后不显示轨迹
-
-![](https://raw.githubusercontent.com/Leekajun/ImageHosting/master/img/gif2.gif)
-
-### 设置颜色和是否显示小箭头
-
-![](https://raw.githubusercontent.com/Leekajun/ImageHosting/master/img/gif3.gif)

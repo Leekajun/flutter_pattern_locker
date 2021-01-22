@@ -9,8 +9,12 @@ class PatternLocker extends InheritedWidget {
   final Function() onStart; //开始绘制
   final Function(String pwd, int length) onComplete; //绘制结束
 
-  PatternLocker({this.config, this.onStart, this.onComplete, this.style})
-      : super(child: Container(child: _PatternLockerLayout()));
+  PatternLocker({
+    this.config,
+    this.style,
+    this.onStart,
+    this.onComplete,
+  }) : super(child: Container(child: _PatternLockerLayout()));
 
   @override
   bool updateShouldNotify(covariant PatternLocker oldWidget) {
@@ -132,6 +136,9 @@ class _PatternLockerLayoutState extends State<_PatternLockerLayout> {
   void _init(BuildContext context) {
     var data = PatternLocker.of(context);
     config = data.config;
+    if (config == null) {
+      config = LockConfig();
+    }
     style = data.style;
     if (style == null) {
       style = LockStyle();
@@ -190,8 +197,6 @@ class _PatternLockerLayoutState extends State<_PatternLockerLayout> {
 
 class _PartternLockItem extends StatelessWidget {
   final LockItemPoint point;
-  // final LockStyle style;
-  // final bool isError;
 
   const _PartternLockItem({this.point, Key key}) : super(key: key);
 
@@ -206,8 +211,9 @@ class _PartternLockItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var data = PatternLocker.of(context);
+    var config = data.config == null ? LockConfig() : data.config;
     var style = data.style;
-    var isError = data.config.isError;
+    var isError = config.isError;
     return Container(
       width: point.size.width,
       height: point.size.height,
@@ -270,6 +276,9 @@ class _PartternLockPainter extends CustomPainter {
   _PartternLockPainter(this.point, {this.isError = false, this.style}) {
     // this.point = point;
     _paint = Paint();
+    if (this.style == null) {
+      this.style = LockStyle();
+    }
     _paint.color = this.style.defaultColor;
     _paint.strokeWidth = this.style.borderWidth;
   }
