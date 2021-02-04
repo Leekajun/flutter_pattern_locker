@@ -8,3 +8,5 @@
 * 使用InheritedWidget
 ## [0.0.5] - TODO: Add release date.
 * 修复一些发现的问题
+## [0.0.6] - TODO: Add release date.
+* 修改一些发现的问题
