@@ -1,12 +1,14 @@
-## [0.0.1] - TODO: Add release date.
+## [0.0.1] - 2021.3.24
 * initial release.
-## [0.0.2] - TODO: Add release date.
+## [0.0.2] - 2021.3.24
 * 更新描述
-## [0.0.3] - TODO: Add release date.
+## [0.0.3] - 2021.3.24
 * 更新描述
-## [0.0.4] - TODO: Add release date.
+## [0.0.4] - 2021.3.24
 * 使用InheritedWidget
-## [0.0.5] - TODO: Add release date.
+## [0.0.5] - 2021.3.24
 * 修复一些发现的问题
-## [0.0.6] - TODO: Add release date.
+## [0.0.6] - 2021.3.24
 * 修改一些发现的问题
+## [0.0.7] - 2021.3.24
+* 更新描述

@@ -1,6 +1,15 @@
 
 # flutter_pattern_locker
-九宫格解锁
+## 九宫格解锁
+
+1. 可以显示错误轨迹
+2. 在绘制完成之后不显示轨迹
+3. 设置颜色和是否显示小箭头
+
+<!-- ![](https://raw.githubusercontent.com/lazyee/ImageHosting/master/img/gif1.gif) -->
+<img src="https://raw.githubusercontent.com/lazyee/ImageHosting/master/img/gif1.gif" width=150 height=266>
+<img src="https://raw.githubusercontent.com/lazyee/ImageHosting/master/img/gif2.gif" width=150 height=266>
+<img src="https://raw.githubusercontent.com/lazyee/ImageHosting/master/img/gif3.gif" width=150 height=266>  
 
 example
 ```dart
@@ -72,14 +81,4 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 ```
-### 可以显示错误轨迹
 
-![](https://raw.githubusercontent.com/lazyee/ImageHosting/master/img/gif1.gif)
-
-### 在绘制完成之后不显示轨迹
-
-![](https://raw.githubusercontent.com/lazyee/ImageHosting/master/img/gif2.gif)
-
-### 设置颜色和是否显示小箭头
-
-![](https://raw.githubusercontent.com/lazyee/ImageHosting/master/img/gif3.gif)
