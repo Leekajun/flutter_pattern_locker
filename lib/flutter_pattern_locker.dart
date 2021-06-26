@@ -1,13 +1,14 @@
 library flutter_pattern_locker;
 
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class PatternLocker extends InheritedWidget {
-  final LockStyle style; //样式
-  final LockConfig config; //配置
-  final Function() onStart; //开始绘制
-  final Function(String pwd, int length) onComplete; //绘制结束
+  final LockStyle? style; //样式
+  final LockConfig? config; //配置
+  final Function()? onStart; //开始绘制
+  final Function(String pwd, int length)? onComplete; //绘制结束
 
   PatternLocker({
     this.config,
@@ -21,7 +22,7 @@ class PatternLocker extends InheritedWidget {
     return true;
   }
 
-  static PatternLocker of(BuildContext context) =>
+  static PatternLocker? of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<PatternLocker>();
 }
 
@@ -33,12 +34,14 @@ class _PatternLockerLayout extends StatefulWidget {
 }
 
 class _PatternLockerLayoutState extends State<_PatternLockerLayout> {
-  LockItemPoint markLockItemPoint;
-  Offset currentPoint;
-  LockStyle style;
-  Function() onStart;
-  Function(String pwd, int lenght) onComplete;
-  LockConfig config;
+  LockItemPoint? markLockItemPoint;
+  Offset? currentPoint;
+
+  Function()? onStart;
+  Function(String pwd, int lenght)? onComplete;
+
+  late LockConfig config;
+  late LockStyle style;
 
   List<LockItemPoint> lockItemCenterPoints = [];
 
@@ -48,13 +51,13 @@ class _PatternLockerLayoutState extends State<_PatternLockerLayout> {
       LockItemPoint point;
       if (lockItemCenterPoints.length < config.rows * config.columns) {
         point = LockItemPoint(
-            (i + config.columns * rowCount + 1).toString(),
-            Offset(
+            tag: (i + config.columns * rowCount + 1).toString(),
+            center: Offset(
               config.lockItemSize.width / 2 + config.lockItemSize.width * i,
               config.lockItemSize.height / 2 +
                   config.lockItemSize.height * rowCount,
             ),
-            config.lockItemSize);
+            size: config.lockItemSize);
         lockItemCenterPoints.add(point);
       } else {
         point = lockItemCenterPoints[i + config.columns * rowCount];
@@ -88,7 +91,7 @@ class _PatternLockerLayoutState extends State<_PatternLockerLayout> {
         if (markLockItemPoint == null) {
           markLockItemPoint = point;
         } else {
-          findLastLockItemPoint().next = point;
+          findLastLockItemPoint()?.next = point;
         }
         point.isMark = true;
         setState(() {
@@ -100,10 +103,10 @@ class _PatternLockerLayoutState extends State<_PatternLockerLayout> {
     }
   }
 
-  LockItemPoint findLastLockItemPoint() {
-    LockItemPoint point = markLockItemPoint;
-    while (point.next != null) {
-      point = point.next;
+  LockItemPoint? findLastLockItemPoint() {
+    LockItemPoint? point = markLockItemPoint;
+    while (point?.next != null) {
+      point = point?.next;
     }
     return point;
   }
@@ -113,11 +116,11 @@ class _PatternLockerLayoutState extends State<_PatternLockerLayout> {
     int length = 0;
     if (markLockItemPoint != null) {
       var point = markLockItemPoint;
-      pwd = "$pwd${point.tag}";
+      pwd = "$pwd${point!.tag}";
       length++;
-      while (point.next != null) {
+      while (point!.next != null) {
         point = point.next;
-        pwd = "$pwd${point.tag}";
+        pwd = "$pwd${point!.tag}";
         length++;
       }
     }
@@ -135,16 +138,10 @@ class _PatternLockerLayoutState extends State<_PatternLockerLayout> {
 
   void _init(BuildContext context) {
     var data = PatternLocker.of(context);
-    config = data.config;
-    if (config == null) {
-      config = LockConfig();
-    }
-    style = data.style;
-    if (style == null) {
-      style = LockStyle();
-    }
-    onStart = data.onStart;
-    onComplete = data.onComplete;
+    config = data?.config ?? LockConfig();
+    style = data?.style ?? LockStyle();
+    onStart = data?.onStart;
+    onComplete = data?.onComplete;
   }
 
   @override
@@ -157,19 +154,15 @@ class _PatternLockerLayoutState extends State<_PatternLockerLayout> {
       child: GestureDetector(
         onPanDown: (details) {
           resetAllPointAndLine();
-          if (onStart != null) {
-            onStart();
-          }
+          onStart?.call();
           onTouch(details.localPosition);
         },
         onPanUpdate: (details) {
           onTouch(details.localPosition);
         },
         onPanEnd: (details) {
-          if (onComplete != null) {
-            var result = getPassword();
-            onComplete(result['pwd'], result['length']);
-          }
+          var result = getPassword();
+          onComplete?.call(result['pwd'], result['length']);
 
           if (!config.isKeepTrackOnComplete) {
             resetAllPointAndLine();
@@ -198,21 +191,21 @@ class _PatternLockerLayoutState extends State<_PatternLockerLayout> {
 class _PartternLockItem extends StatelessWidget {
   final LockItemPoint point;
 
-  const _PartternLockItem({this.point, Key key}) : super(key: key);
+  const _PartternLockItem({required this.point, Key? key}) : super(key: key);
 
   double _caculateAngle(LockItemPoint point) {
     // print(point);
     if (point.next == null) return 0;
-    var angle = atan2(point.next.center.dx - point.center.dx,
-        point.next.center.dy - point.center.dy);
+    var angle = atan2(point.next!.center.dx - point.center.dx,
+        point.next!.center.dy - point.center.dy);
     return pi - angle;
   }
 
   @override
   Widget build(BuildContext context) {
     var data = PatternLocker.of(context);
-    var config = data.config == null ? LockConfig() : data.config;
-    var style = data.style;
+    var config = data?.config ?? LockConfig();
+    var style = data?.style ?? LockStyle();
     var isError = config.isError;
     return Container(
       width: point.size.width,
@@ -231,32 +224,33 @@ class _PartternLockItem extends StatelessWidget {
 }
 
 class _PartternLockLinePainter extends CustomPainter {
-  Paint _paint;
-  LockItemPoint point;
-  Offset currentPoint;
+  Paint _paint = Paint();
+  LockItemPoint? point;
+  Offset? currentPoint;
   LockStyle style;
   bool isError;
   _PartternLockLinePainter(
-      {this.point, this.currentPoint, this.style, this.isError = false}) {
-    _paint = Paint();
-
+      {this.point,
+      this.currentPoint,
+      this.style = const LockStyle(),
+      this.isError = false}) {
     _paint.strokeWidth = this.style.lineWidth;
   }
   @override
   void paint(Canvas canvas, Size size) {
-    if (point == null) return;
     _paint.color = isError ? this.style.errorColor : this.style.selectedColor;
     Path path = Path();
     _paint.style = PaintingStyle.stroke;
 
-    path.moveTo(point.center.dx, point.center.dy);
-    while (point.next != null) {
-      point = point.next;
-      path.lineTo(point.center.dx, point.center.dy);
+    if (point == null) return;
+    path.moveTo(point!.center.dx, point!.center.dy);
+    while (point!.next != null) {
+      point = point!.next;
+      path.lineTo(point!.center.dx, point!.center.dy);
     }
 
     if (currentPoint != null) {
-      path.lineTo(currentPoint.dx, currentPoint.dy);
+      path.lineTo(currentPoint!.dx, currentPoint!.dy);
     }
     canvas.drawPath(path, _paint);
   }
@@ -268,25 +262,21 @@ class _PartternLockLinePainter extends CustomPainter {
 }
 
 class _PartternLockPainter extends CustomPainter {
-  Paint _paint;
+  Paint _paint = Paint();
   LockItemPoint point;
-  LockStyle style;
+  LockStyle? style;
   bool isError;
 
-  _PartternLockPainter(this.point, {this.isError = false, this.style}) {
-    // this.point = point;
-    _paint = Paint();
-    if (this.style == null) {
-      this.style = LockStyle();
-    }
-    _paint.color = this.style.defaultColor;
-    _paint.strokeWidth = this.style.borderWidth;
+  _PartternLockPainter(this.point,
+      {this.isError = false, this.style = const LockStyle()}) {
+    _paint.color = this.style!.defaultColor;
+    _paint.strokeWidth = this.style!.borderWidth;
   }
   @override
   void paint(Canvas canvas, Size size) {
     _paint.color = this.point.isMark
-        ? (this.isError ? this.style.errorColor : this.style.selectedColor)
-        : this.style.defaultColor;
+        ? (this.isError ? this.style!.errorColor : this.style!.selectedColor)
+        : this.style!.defaultColor;
 
     var center = Offset(point.size.width / 2, point.size.height / 2);
     _paint.style = PaintingStyle.stroke;
@@ -301,7 +291,7 @@ class _PartternLockPainter extends CustomPainter {
     rect = Rect.fromCircle(center: center, radius: point.radius);
     path.addArc(rect, 0, 360);
     _paint.color =
-        (this.isError ? this.style.errorColor : this.style.selectedColor)
+        (this.isError ? this.style!.errorColor : this.style!.selectedColor)
             .withAlpha(0x20);
     _paint.style = PaintingStyle.fill;
     canvas.drawPath(path, _paint);
@@ -310,11 +300,11 @@ class _PartternLockPainter extends CustomPainter {
     rect = Rect.fromCircle(center: center, radius: point.radius / 3.5);
     path.addArc(rect, 0, 360);
     _paint.color =
-        (this.isError ? this.style.errorColor : this.style.selectedColor);
+        (this.isError ? this.style!.errorColor : this.style!.selectedColor);
     _paint.style = PaintingStyle.fill;
     canvas.drawPath(path, _paint);
 
-    if (this.style.isShowArrow) {
+    if (this.style!.isShowArrow) {
       drawNextArrow(
           canvas, center, point.radius / 2.5, point.radius / 5, point.next);
     }
@@ -322,7 +312,7 @@ class _PartternLockPainter extends CustomPainter {
 
   ///绘制箭头
   void drawNextArrow(Canvas canvas, Offset center, double arrowWidth,
-      double arrowHeight, LockItemPoint nextPoint) {
+      double arrowHeight, LockItemPoint? nextPoint) {
     if (nextPoint == null) return;
     Path path = Path();
     _paint.style = PaintingStyle.fill;
@@ -349,7 +339,7 @@ class LockStyle {
   final Color defaultColor;
   final bool isShowArrow;
 
-  LockStyle({
+  const LockStyle({
     this.isShowArrow = true,
     this.lineWidth = 3.0,
     this.borderWidth = 1.0,
@@ -378,12 +368,16 @@ class LockConfig {
 class LockItemPoint {
   String tag;
   Offset center;
-  double radius;
+  double radius = 0;
   Size size;
   bool isMark = false;
-  LockItemPoint next;
+  LockItemPoint? next;
 
-  LockItemPoint(this.tag, this.center, this.size) {
+  LockItemPoint(
+      {required this.tag,
+      required this.center,
+      required this.size,
+      this.next}) {
     radius = size.width * 0.4;
   }
 
